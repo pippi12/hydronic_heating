@@ -742,9 +742,9 @@ package System
         Placement(visible = true, transformation(origin = {-128, 88}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
       // parameters
       parameter Real K = 150 "1st delay K";
-      parameter Modelica.Units.SI.Time T = 500 "1st delay T [s]";
-      parameter Modelica.Units.SI.Time L = 100 "wasted time L [s]";
-      parameter Modelica.Units.SI.Temperature InitialTemp = 273.15 + 30 "Initial Temperature [K]";
+      parameter Modelica.Units.SI.Time T = 500 "1st delay T";
+      parameter Modelica.Units.SI.Time L = 100 "wasted time L";
+      parameter Modelica.Units.SI.Temperature InitialTemp = 273.15 + 30 "Initial Temperature";
       // parts
       Modelica.Fluid.Interfaces.FluidPort_a port_a(redeclare package Medium = Medium) annotation(
         Placement(visible = true, transformation(origin = {-120, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-120, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
@@ -2030,6 +2030,7 @@ package System
 
   model plant
     replaceable package Medium = Buildings.Media.Water;
+    replaceable package MediumAir = Buildings.Media.Air;
     inner Modelica.Fluid.System system annotation(
       Placement(visible = true, transformation(origin = {-142, 140}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
     import SI = Modelica.Units.SI;
@@ -2090,7 +2091,7 @@ package System
       Placement(transformation(origin = {26, -54}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
     Modelica.Thermal.HeatTransfer.Celsius.TemperatureSensor temperatureSensor1 annotation(
       Placement(visible = true, transformation(origin = {46, 18}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
-    System.MyComponents.HEX_HP hex_hp(InitialTemp = medium_initT) annotation(
+    System.MyComponents.HEX_HP hex_hp(redeclare package Medium = Medium, InitialTemp = medium_initT) annotation(
       Placement(visible = true, transformation(origin = {-77.6112, 18.3373}, extent = {{-14.6707, 15.2349}, {7.33533, 37.2409}}, rotation = 90)));
     System.MyComponents.HexControl hexControl annotation(
       Placement(visible = true, transformation(origin = {-114, -2}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
@@ -2121,7 +2122,7 @@ package System
       Placement(visible = true, transformation(origin = {148, 48}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
     Buildings.Fluid.FixedResistances.Junction jun_r2(redeclare package Medium = Medium, dp_nominal = {0, 0, 0}, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, m_flow_nominal = m_flow_room * {1, -1, -1}) annotation(
       Placement(visible = true, transformation(origin = {148, -34}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
-    MyComponents.RoomWithoutLossnay roomWithoutLossnay1 annotation(
+    MyComponents.RoomWithoutLossnay roomWithoutLossnay1(redeclare package Medium = MediumAir) annotation(
       Placement(visible = true, transformation(origin = {248, 16}, extent = {{-10, 16}, {14, 42}}, rotation = 0)));
     System.MyComponents.PumpControl pumpControl annotation(
       Placement(visible = true, transformation(origin = {116, 80}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
