@@ -945,9 +945,9 @@ end HexControl;
         Placement(visible = true, transformation(origin = {-92, 34}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
       Modelica.Thermal.HeatTransfer.Components.ThermalConductor thermalConductor_wall2(G = rw_k * room_area * 2 / rw_thickness) annotation(
         Placement(visible = true, transformation(origin = {-44, 34}, extent = {{10, -10}, {-10, 10}}, rotation = 0)));
-      Buildings.HeatTransfer.Convection.Exterior con_ext(A = room_area, conMod = Buildings.HeatTransfer.Types.ExteriorConvection.Fixed, hFixed = rw_air_htc, azi = 3.14 / 2) annotation(
+      Buildings.HeatTransfer.Convection.Exterior con_ext(A = room_area, azi = 3.14 / 2, conMod = Buildings.HeatTransfer.Types.ExteriorConvection.Fixed, hFixed = rw_air_htc, til = 0) annotation(
         Placement(visible = true, transformation(origin = {-132, 34}, extent = {{10, -10}, {-10, 10}}, rotation = 0)));
-      Buildings.HeatTransfer.Convection.Interior con_int(conMod = Buildings.HeatTransfer.Types.InteriorConvection.Fixed, A = room_area, hFixed = rw_air_htc) annotation(
+      Buildings.HeatTransfer.Convection.Interior con_int( A = room_area,conMod = Buildings.HeatTransfer.Types.InteriorConvection.Fixed, hFixed = rw_air_htc, til = 0) annotation(
         Placement(visible = true, transformation(origin = {-6, 34}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
       Modelica.Blocks.Sources.Constant const_v(k = 0) annotation(
         Placement(visible = true, transformation(origin = {-94, 84}, extent = {{-7, 7}, {7, -7}}, rotation = -180)));
