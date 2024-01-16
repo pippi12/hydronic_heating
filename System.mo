@@ -934,7 +934,7 @@ package System
       //
       Buildings.HeatTransfer.Sources.FixedTemperature ambT(T = amb_T) annotation(
         Placement(visible = true, transformation(origin = {-160, 34}, extent = {{-8, -8}, {8, 8}}, rotation = 0)));
-      Buildings.Fluid.MixingVolumes.MixingVolume roomAir(redeclare package Medium = MediumAir, T_start = mediumRoomAir_initT, V = room_w * room_d * room_h, allowFlowReversal = false, m_flow_nominal = 0.01, massDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, nPorts = 0, p_start(displayUnit = "Pa") = mediumRoomAir_initP, use_C_flow = false) annotation(
+      Buildings.Fluid.MixingVolumes.MixingVolume roomAir(redeclare package Medium = MediumAir, T_start = mediumRoomAir_initT, V = room_w * room_d * room_h, allowFlowReversal = true, m_flow_nominal = 0.01, massDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, nPorts = 0, p_start(displayUnit = "Pa") = mediumRoomAir_initP, use_C_flow = false) annotation(
         Placement(visible = true, transformation(origin = {22, 2}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
       Modelica.Thermal.HeatTransfer.Components.HeatCapacitor heatCapacitor(C = rw_vol * rw_rho * rw_c, T(fixed = true, start = rw_initT)) annotation(
         Placement(visible = true, transformation(origin = {-68, 54}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
