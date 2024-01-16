@@ -951,9 +951,9 @@ package System
       Modelica.Blocks.Sources.Constant const_d(k = 0) annotation(
         Placement(visible = true, transformation(origin = {-94, 64}, extent = {{-7, 7}, {7, -7}}, rotation = -180)));
       Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a HeatPortCon annotation(
-        Placement(visible = true, transformation(origin = {-182, 4}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {0, -50}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+        Placement(visible = true, transformation(origin = {-182, 4}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-2, 50}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
       Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a HeatPortRad annotation(
-        Placement(visible = true, transformation(origin = {-182, -22}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {0, 50}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+        Placement(visible = true, transformation(origin = {-182, -22}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-2, -50}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
       Modelica.Thermal.HeatTransfer.Celsius.TemperatureSensor temperatureSensor annotation(
         Placement(visible = true, transformation(origin = {58, 2}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
       Modelica.Blocks.Interfaces.RealOutput T annotation(
@@ -1093,9 +1093,94 @@ package System
   connect(pipe_r5.heatPort, outdoor.port) annotation(
         Line(points = {{-104, -14}, {-154, -14}, {-154, 86}, {-182, 86}}, color = {191, 0, 0}));
       annotation(
-        Icon(graphics = {Rectangle(lineColor = {90, 90, 90},fillColor = {255, 255, 255}, fillPattern = FillPattern.Solid, lineThickness = 1, extent = {{-100, 100}, {100, -100}}), Text(origin = {0, 120}, extent = {{-100, 20}, {100, -20}}, textString = "%name", textStyle = {TextStyle.Bold}), Line(origin = {-25, 25}, points = {{-65, 25}, {65, 25}, {65, -25}, {65, -25}, {65, -25}, {65, -25}}, color = {255, 0, 0}, thickness = 0.5), Line(origin = {-15, 35}, points = {{-75, -85}, {55, -85}, {55, -35}}, color = {0, 0, 255}, thickness = 0.5), Rectangle(extent = {{-38, 100}, {-38, 100}}), Rectangle(origin = {40, 0}, fillColor = {99, 99, 99}, fillPattern = FillPattern.Solid, extent = {{-10, 22}, {10, -22}})}, coordinateSystem(extent = {{-100, -100}, {100, 100}})),
+        Icon(graphics = {Rectangle(origin = {0, -2},lineColor = {90, 90, 90},fillColor = {255, 255, 255}, fillPattern = FillPattern.Solid, lineThickness = 1, extent = {{-100, 100}, {100, -100}}), Text(origin = {0, 120}, lineColor = {0, 0, 255}, extent = {{-100, 20}, {100, -20}}, textString = "%name"), Line(origin = {-25, 25}, points = {{-65, 25}, {65, 25}, {65, -25}, {65, -25}, {65, -25}, {65, -25}}, color = {255, 0, 0}, thickness = 0.5), Line(origin = {-15, 35}, points = {{-75, -85}, {55, -85}, {55, -35}}, color = {0, 0, 255}, thickness = 0.5), Rectangle(extent = {{-38, 100}, {-38, 100}}), Rectangle(origin = {40, 0}, fillColor = {99, 99, 99}, fillPattern = FillPattern.Solid, extent = {{-10, 22}, {10, -22}}), Line(origin = {-32, 27}, points = {{0, 23}, {0, -23}, {0, -23}}, color = {255, 0, 0}, thickness = 0.5), Line(origin = {-31.62, -25.26}, points = {{0, 23}, {0, -23}, {0, -23}}, color = {0, 0, 255}, thickness = 0.5), Polygon(rotation = 90, fillColor = DynamicSelect({0, 0, 0}, {y * 255, y * 255, y * 255}), fillPattern = FillPattern.Solid, points = {{6, 32}, {-2, 38}, {-2, 26}, {6, 32}}), Polygon(rotation = 90, fillColor = {255, 255, 255}, fillPattern = FillPattern.Solid, points = {{6, 32}, {14, 38}, {14, 26}, {6, 32}})}, coordinateSystem(extent = {{-100, -100}, {100, 100}})),
         Diagram(coordinateSystem(extent = {{-240, 120}, {40, -60}})));
     end RoomCycle1ZoneTempCtrl;
+    
+    model RoomCycle1ZoneTempCtrl2
+      replaceable package Medium = Buildings.Media.Water;
+      inner Modelica.Fluid.System system annotation(
+        Placement(visible = true, transformation(origin = {-172, 110}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+      // Parameters
+      parameter Modelica.Units.SI.Temperature amb_T = 273.15 + 5 "Ambience initial temperature";
+      // Initialization
+      parameter Modelica.Units.SI.Temperature medium_initT = 273.15 + 30 "Water initial temperature";
+      parameter Modelica.Units.SI.Temperature rad_initT = 273.15 + 40 "Radiator water initial temperature";
+      // Pipe
+      parameter Modelica.Units.SI.Length pip_len = 1 "Length of pipe wall";
+      parameter Modelica.Units.SI.Length pip5_len = 0.2 "Length of pipe wall";
+      parameter Modelica.Units.SI.SpecificHeatCapacity pip_c = 386 "Specific heat of pipe wall material";
+      parameter Modelica.Units.SI.Density pip_rho = 8960 "Density of pipe wall material";
+      parameter Modelica.Units.SI.Length pip_dh = 0.025 "Inner diameter of pipe";
+      parameter Modelica.Units.SI.Length pip_thickness = 0.005 "Thickness of pipe wall";
+      parameter Modelica.Units.SI.Length pip_dIns = 0.005 "Thickness of pipe insulation";
+      parameter Modelica.Units.SI.ThermalConductivity pip_kIns = 398 "Heat conductivity of pipe insulation";
+      parameter Modelica.Units.SI.CoefficientOfHeatTransfer pip_air_htc = 10 "Air-Pipe heat transfer coeff.";
+      // Radiator
+      parameter Modelica.Units.SI.Power q_flow_nominal = 5000 "Rated heat dissipation amount";
+      //
+      final parameter Modelica.Units.SI.MassFlowRate m_flow_nominal = 0.1 "Mass flow rate";
+      final parameter Modelica.Units.SI.PressureDifference dp_nominal = 4500 "Design pressure drop";
+      // Components
+      Buildings.Fluid.Movers.FlowControlled_m_flow pump_m_flow_r1(redeclare package Medium = Medium, T_start = medium_initT, allowFlowReversal = false, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, inputType = Buildings.Fluid.Types.InputType.Continuous, m_flow_nominal = m_flow_nominal, massFlowRates = {0, 0.5, 1} * m_flow_nominal, nominalValuesDefineDefaultPressureCurve = true, use_inputFilter = false) "Pump with m_flow input" annotation(
+        Placement(visible = true, transformation(origin = {-126, 42}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+      Buildings.Fluid.HeatExchangers.Radiators.RadiatorEN442_2 rad(redeclare package Medium = Medium, Q_flow_nominal = q_flow_nominal, TAir_nominal = 293.15, T_a_nominal = 353.15, T_b_nominal = 333.15, T_start = rad_initT, allowFlowReversal = false, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, fraRad = 0, p_start = 101325, nEle = 1) annotation(
+        Placement(visible = true, transformation(origin = {-26, 10}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
+      Buildings.Fluid.FixedResistances.PlugFlowPipe pipe_r1(redeclare package Medium = Medium, T_start_in = medium_initT, T_start_out = medium_initT, allowFlowReversal = false, cPip = pip_c, dIns = pip_thickness, dh = pip_dh, kIns = pip_kIns, length = pip_len, rhoPip = pip_rho, thickness = pip_thickness, m_flow_nominal = m_flow_nominal, R = Modelica.Math.log((pip_dh + pip_thickness) / pip_dh) / (2 * Modelica.Constants.pi * pip_kIns) + 1 / pip_air_htc / Modelica.Constants.pi / (pip_dh + pip_thickness)) annotation(
+        Placement(visible = true, transformation(origin = {-154, 42}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+      Buildings.Fluid.FixedResistances.PlugFlowPipe pipe_r2(redeclare package Medium = Medium, T_start_in = medium_initT, T_start_out = medium_initT, allowFlowReversal = false, cPip = pip_c, dIns = pip_thickness, dh = pip_dh, kIns = pip_kIns, length = pip_len, rhoPip = pip_rho, thickness = pip_thickness, m_flow_nominal = m_flow_nominal, R = Modelica.Math.log((pip_dh + pip_thickness) / pip_dh) / (2 * Modelica.Constants.pi * pip_kIns) + 1 / pip_air_htc / Modelica.Constants.pi / (pip_dh + pip_thickness)) annotation(
+        Placement(visible = true, transformation(origin = {-52, 42}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+      Buildings.Fluid.FixedResistances.PlugFlowPipe pipe_r3(redeclare package Medium = Medium, T_start_in = medium_initT, T_start_out = medium_initT, allowFlowReversal = false, cPip = pip_c, dIns = pip_thickness, dh = pip_dh, kIns = pip_kIns, length = pip_len, rhoPip = pip_rho, thickness = pip_thickness, m_flow_nominal = m_flow_nominal, R = Modelica.Math.log((pip_dh + pip_thickness) / pip_dh) / (2 * Modelica.Constants.pi * pip_kIns) + 1 / pip_air_htc / Modelica.Constants.pi / (pip_dh + pip_thickness)) annotation(
+        Placement(visible = true, transformation(origin = {-52, -40}, extent = {{10, -10}, {-10, 10}}, rotation = 0)));
+      Buildings.Fluid.FixedResistances.PlugFlowPipe pipe_r4(redeclare package Medium = Medium, T_start_in = medium_initT, T_start_out = medium_initT, allowFlowReversal = false, cPip = pip_c, dIns = pip_thickness, dh = pip_dh, kIns = pip_kIns, length = pip_len, rhoPip = pip_rho, thickness = pip_thickness, m_flow_nominal = m_flow_nominal, R = Modelica.Math.log((pip_dh + pip_thickness) / pip_dh) / (2 * Modelica.Constants.pi * pip_kIns) + 1 / pip_air_htc / Modelica.Constants.pi / (pip_dh + pip_thickness)) annotation(
+        Placement(visible = true, transformation(origin = {-154, -40}, extent = {{10, -10}, {-10, 10}}, rotation = 0)));
+      Buildings.HeatTransfer.Sources.FixedTemperature outdoor(T = amb_T) "Boundary temperature" annotation(
+        Placement(visible = true, transformation(origin = {-190, 85}, extent = {{-7, -7}, {7, 7}}, rotation = 0)));
+    // Interfaces
+      //
+      Modelica.Fluid.Interfaces.FluidPort_a port_a(redeclare package Medium = Medium) annotation(
+          Placement(visible = true, transformation(origin = {-180, 42}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-100, 50}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+    Modelica.Fluid.Interfaces.FluidPort_b port_b(redeclare package Medium = Medium) annotation(
+          Placement(visible = true, transformation(origin = {-180, -40}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-100, -50}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+    Modelica.Blocks.Interfaces.RealInput m_flow_rate annotation(
+          Placement(visible = true, transformation(origin = {-222, 70}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-120, 100}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
+    Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a port_rad annotation(
+          Placement(visible = true, transformation(origin = {24, -2}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {100, -50}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+    Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a port_con annotation(
+          Placement(visible = true, transformation(origin = {24, 22}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {100, 50}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+    equation
+      connect(pipe_r1.port_b, pump_m_flow_r1.port_a) annotation(
+        Line(points = {{-144, 42}, {-136, 42}}, color = {0, 127, 255}));
+      connect(pipe_r2.port_b, rad.port_a) annotation(
+        Line(points = {{-42, 42}, {-26, 42}, {-26, 20}}, color = {0, 127, 255}));
+      connect(rad.port_b, pipe_r3.port_a) annotation(
+        Line(points = {{-26, 0}, {-26, -40}, {-42, -40}}, color = {0, 127, 255}));
+      connect(pipe_r4.port_b, port_b) annotation(
+        Line(points = {{-164, -40}, {-180, -40}}, color = {0, 127, 255}));
+      connect(port_a, pipe_r1.port_a) annotation(
+        Line(points = {{-180, 42}, {-164, 42}}));
+      connect(m_flow_rate, pump_m_flow_r1.m_flow_in) annotation(
+        Line(points = {{-222, 70}, {-126, 70}, {-126, 54}}, color = {0, 0, 127}));
+      connect(rad.heatPortCon, port_con) annotation(
+        Line(points = {{-18, 12}, {12, 12}, {12, 22}, {24, 22}}, color = {191, 0, 0}));
+      connect(rad.heatPortRad, port_rad) annotation(
+        Line(points = {{-18, 8}, {12, 8}, {12, -2}, {24, -2}}, color = {191, 0, 0}));
+      connect(outdoor.port, pipe_r1.heatPort) annotation(
+        Line(points = {{-182, 86}, {-154, 86}, {-154, 52}}, color = {191, 0, 0}));
+      connect(outdoor.port, pipe_r2.heatPort) annotation(
+        Line(points = {{-182, 86}, {-52, 86}, {-52, 52}}, color = {191, 0, 0}));
+      connect(outdoor.port, pipe_r4.heatPort) annotation(
+        Line(points = {{-182, 86}, {-154, 86}, {-154, -30}}, color = {191, 0, 0}));
+      connect(outdoor.port, pipe_r3.heatPort) annotation(
+        Line(points = {{-182, 86}, {-52, 86}, {-52, -30}}, color = {191, 0, 0}));
+  connect(pump_m_flow_r1.port_b, pipe_r2.port_a) annotation(
+        Line(points = {{-116, 42}, {-62, 42}}, color = {0, 127, 255}));
+  connect(pipe_r3.port_b, pipe_r4.port_a) annotation(
+        Line(points = {{-62, -40}, {-144, -40}}, color = {0, 127, 255}));
+      annotation(
+        Icon(graphics = {Rectangle(lineColor = {90, 90, 90},fillColor = {255, 255, 255}, fillPattern = FillPattern.Solid, lineThickness = 1, extent = {{-100, 100}, {100, -100}}), Text(origin = {0, 120}, lineColor = {0, 0, 255}, extent = {{-100, 20}, {100, -20}}, textString = "%name"), Line(origin = {-25, 25}, points = {{-65, 25}, {65, 25}, {65, -25}, {65, -25}, {65, -25}, {65, -25}}, color = {255, 0, 0}, thickness = 0.5), Line(origin = {-15, 35}, points = {{-75, -85}, {55, -85}, {55, -35}}, color = {0, 0, 255}, thickness = 0.5), Rectangle(extent = {{-38, 100}, {-38, 100}}), Rectangle(origin = {40, 0}, fillColor = {99, 99, 99}, fillPattern = FillPattern.Solid, extent = {{-10, 22}, {10, -22}})}, coordinateSystem(extent = {{-100, -100}, {100, 100}})),
+        Diagram(coordinateSystem(extent = {{-240, 120}, {40, -60}})));
+    end RoomCycle1ZoneTempCtrl2;
   end MyComponents;
 
   package Test
@@ -2100,34 +2185,14 @@ package System
     Buildings.Fluid.FixedResistances.Junction jun(redeclare package Medium = Medium, dp_nominal = {0, 0, 0}, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, m_flow_nominal = m_flow * {1, -1, -1}) "Splitter" annotation(
       Placement(visible = true, transformation(origin = {-74, 72}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
     // romm cycle
-    Buildings.Fluid.Movers.FlowControlled_m_flow pump_m_flow_r1(redeclare package Medium = Medium, T_start = medium_initT, allowFlowReversal = false, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, inputType = Buildings.Fluid.Types.InputType.Continuous, m_flow_nominal = m_flow_nominal, massFlowRates = {0, 0.5, 1} * m_flow_nominal, nominalValuesDefineDefaultPressureCurve = true, use_inputFilter = false) "Pump with m_flow input" annotation(
-      Placement(visible = true, transformation(origin = {116, 48}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-    Buildings.Fluid.HeatExchangers.Radiators.RadiatorEN442_2 rad(redeclare package Medium = Medium, Q_flow_nominal = q_flow_nominal, TAir_nominal = 293.15, T_a_nominal = 353.15, T_b_nominal = 333.15, T_start = rad_initT, allowFlowReversal = false, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, fraRad = 0, p_start = 101325, nEle = 1) annotation(
-      Placement(visible = true, transformation(origin = {216, 16}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
-    Buildings.Fluid.FixedResistances.PlugFlowPipe pipe_r1(redeclare package Medium = Medium, T_start_in = medium_initT, T_start_out = medium_initT, allowFlowReversal = false, cPip = pip_c, dIns = pip_thickness, dh = pip_dh, kIns = pip_kIns, length = pip_len, rhoPip = pip_rho, thickness = pip_thickness, m_flow_nominal = m_flow_nominal, R = Modelica.Math.log((pip_dh + pip_thickness) / pip_dh) / (2 * Modelica.Constants.pi * pip_kIns) + 1 / pip_air_htc / Modelica.Constants.pi / (pip_dh + pip_thickness)) annotation(
-      Placement(visible = true, transformation(origin = {88, 48}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-    Buildings.Fluid.FixedResistances.PlugFlowPipe pipe_r2(redeclare package Medium = Medium, T_start_in = medium_initT, T_start_out = medium_initT, allowFlowReversal = false, cPip = pip_c, dIns = pip_thickness, dh = pip_dh, kIns = pip_kIns, length = pip_len, rhoPip = pip_rho, thickness = pip_thickness, m_flow_nominal = m_flow_nominal, R = Modelica.Math.log((pip_dh + pip_thickness) / pip_dh) / (2 * Modelica.Constants.pi * pip_kIns) + 1 / pip_air_htc / Modelica.Constants.pi / (pip_dh + pip_thickness)) annotation(
-      Placement(visible = true, transformation(origin = {190, 48}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-    Buildings.Fluid.FixedResistances.PlugFlowPipe pipe_r3(redeclare package Medium = Medium, T_start_in = medium_initT, T_start_out = medium_initT, allowFlowReversal = false, cPip = pip_c, dIns = pip_thickness, dh = pip_dh, kIns = pip_kIns, length = pip_len, rhoPip = pip_rho, thickness = pip_thickness, m_flow_nominal = m_flow_nominal, R = Modelica.Math.log((pip_dh + pip_thickness) / pip_dh) / (2 * Modelica.Constants.pi * pip_kIns) + 1 / pip_air_htc / Modelica.Constants.pi / (pip_dh + pip_thickness)) annotation(
-      Placement(visible = true, transformation(origin = {190, -34}, extent = {{10, -10}, {-10, 10}}, rotation = 0)));
-    Buildings.Fluid.FixedResistances.PlugFlowPipe pipe_r4(redeclare package Medium = Medium, T_start_in = medium_initT, T_start_out = medium_initT, allowFlowReversal = false, cPip = pip_c, dIns = pip_thickness, dh = pip_dh, kIns = pip_kIns, length = pip_len, rhoPip = pip_rho, thickness = pip_thickness, m_flow_nominal = m_flow_nominal, R = Modelica.Math.log((pip_dh + pip_thickness) / pip_dh) / (2 * Modelica.Constants.pi * pip_kIns) + 1 / pip_air_htc / Modelica.Constants.pi / (pip_dh + pip_thickness)) annotation(
-      Placement(visible = true, transformation(origin = {88, -34}, extent = {{10, -10}, {-10, 10}}, rotation = 0)));
-    Buildings.Fluid.FixedResistances.PlugFlowPipe pipe_r5(redeclare package Medium = Medium, T_start_in = medium_initT, T_start_out = medium_initT, allowFlowReversal = true, cPip = pip_c, dIns = pip_thickness, dh = pip_dh, kIns = pip_kIns, length = pipr5_len, rhoPip = pip_rho, thickness = pip_thickness, m_flow_nominal = m_flow_nominal, R = Modelica.Math.log((pip_dh + pip_thickness) / pip_dh) / (2 * Modelica.Constants.pi * pip_kIns) + 1 / pip_air_htc / Modelica.Constants.pi / (pip_dh + pip_thickness)) annotation(
-      Placement(visible = true, transformation(origin = {148, -8}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
-    Buildings.Fluid.Actuators.Valves.TwoWayLinear val_r1(CvData = Buildings.Fluid.Types.CvTypes.OpPoint, redeclare package Medium = Medium, dpValve_nominal(displayUnit = "kPa") = dp_nominal, m_flow_nominal = m_flow_nominal, use_inputFilter = false) annotation(
-      Placement(visible = true, transformation(origin = {148, 20}, extent = {{10, -10}, {-10, 10}}, rotation = -90)));
-    Modelica.Blocks.Sources.Constant const_r1(k = 0) annotation(
-      Placement(visible = true, transformation(origin = {174, 9}, extent = {{-7, 7}, {7, -7}}, rotation = 90)));
-    Buildings.Fluid.FixedResistances.Junction jun_r1(redeclare package Medium = Medium, dp_nominal = {0, 0, 0}, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, m_flow_nominal = m_flow_room * {1, -1, 1}) annotation(
-      Placement(visible = true, transformation(origin = {148, 48}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-    Buildings.Fluid.FixedResistances.Junction jun_r2(redeclare package Medium = Medium, dp_nominal = {0, 0, 0}, energyDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, m_flow_nominal = m_flow_room * {1, -1, -1}) annotation(
-      Placement(visible = true, transformation(origin = {148, -34}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
-    MyComponents.RoomWithoutLossnay roomWithoutLossnay1(redeclare package Medium = MediumAir) annotation(
-      Placement(visible = true, transformation(origin = {248, 16}, extent = {{-10, 16}, {14, 42}}, rotation = 0)));
+    System.MyComponents.RoomWithoutLossnay roomWithoutLossnay1(redeclare package Medium = MediumAir) annotation(
+      Placement(visible = true, transformation(origin = {124, 72}, extent = {{-10, 16}, {14, 42}}, rotation = 0)));
     System.MyComponents.PumpControl pumpControl annotation(
-      Placement(visible = true, transformation(origin = {116, 80}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
+      Placement(visible = true, transformation(origin = {70, 104}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
     Modelica.Blocks.Sources.RealExpression TsetAir(y = 25) annotation(
-      Placement(visible = true, transformation(origin = {158, 100}, extent = {{10, -10}, {-10, 10}}, rotation = 0)));
+      Placement(visible = true, transformation(origin = {112, 124}, extent = {{10, -10}, {-10, 10}}, rotation = 0)));
+    System.MyComponents.RoomCycle1ZoneTempCtrl2 roomCycle1ZoneTempCtrl2(redeclare package Medium = Medium) annotation(
+      Placement(visible = true, transformation(origin = {90, 72}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   equation
     connect(pump_m_flow.port_b, pipe4.port_a) annotation(
       Line(points = {{-64, -40}, {-74, -40}, {-74, -24}}, color = {0, 127, 255}));
@@ -2175,54 +2240,22 @@ package System
       Line(points = {{-74, 82}, {-74, 96}, {-34, 96}}, color = {0, 127, 255}));
     connect(jun.port_3, val.port_a) annotation(
       Line(points = {{-64, 72}, {-54, 72}}, color = {0, 127, 255}));
-    connect(pipe_r1.port_b, pump_m_flow_r1.port_a) annotation(
-      Line(points = {{98, 48}, {106, 48}}, color = {0, 127, 255}));
-    connect(pump_m_flow_r1.port_b, jun_r1.port_1) annotation(
-      Line(points = {{126, 48}, {138, 48}}, color = {0, 127, 255}));
-    connect(jun_r1.port_2, pipe_r2.port_a) annotation(
-      Line(points = {{158, 48}, {180, 48}}, color = {0, 127, 255}));
-    connect(pipe_r2.port_b, rad.port_a) annotation(
-      Line(points = {{200, 48}, {216, 48}, {216, 26}}, color = {0, 127, 255}));
-    connect(rad.port_b, pipe_r3.port_a) annotation(
-      Line(points = {{216, 6}, {216, -34}, {200, -34}}, color = {0, 127, 255}));
-    connect(pipe_r4.port_a, jun_r2.port_2) annotation(
-      Line(points = {{98, -34}, {138, -34}}, color = {0, 127, 255}));
-    connect(pipe_r3.port_b, jun_r2.port_1) annotation(
-      Line(points = {{180, -34}, {158, -34}}, color = {0, 127, 255}));
-    connect(const_r1.y, val_r1.y) annotation(
-      Line(points = {{174, 17}, {167, 17}, {167, 20}, {160, 20}}, color = {0, 0, 127}));
-    connect(BufferTank.fluPorVol[1], pipe_r1.port_a) annotation(
-      Line(points = {{30, 82}, {78, 82}, {78, 48}}, color = {0, 127, 255}));
-    connect(pipe_r4.port_b, BufferTank.fluPorVol[2]) annotation(
-      Line(points = {{78, -34}, {64, -34}, {64, 82}, {30, 82}}, color = {0, 127, 255}));
-    connect(pipe_r1.heatPort, outdoor.port) annotation(
-      Line(points = {{88, 58}, {88, 118}, {-110, 118}}, color = {191, 0, 0}));
-    connect(pipe_r2.heatPort, outdoor.port) annotation(
-      Line(points = {{190, 58}, {190, 118}, {-110, 118}}, color = {191, 0, 0}));
-    connect(outdoor.port, pipe_r4.heatPort) annotation(
-      Line(points = {{-110, 118}, {88, 118}, {88, -24}}, color = {191, 0, 0}));
-    connect(outdoor.port, pipe_r3.heatPort) annotation(
-      Line(points = {{-110, 118}, {190, 118}, {190, -24}}, color = {191, 0, 0}));
-    connect(outdoor.port, pipe_r5.heatPort) annotation(
-      Line(points = {{-110, 118}, {138, 118}, {138, -8}}, color = {191, 0, 0}));
-    connect(jun_r2.port_3, pipe_r5.port_a) annotation(
-      Line(points = {{148, -24}, {148, -18}}, color = {0, 127, 255}));
-    connect(pipe_r5.port_b, val_r1.port_a) annotation(
-      Line(points = {{148, 2}, {148, 10}}, color = {0, 127, 255}));
-    connect(val_r1.port_b, jun_r1.port_3) annotation(
-      Line(points = {{148, 30}, {148, 38}}, color = {0, 127, 255}));
-    connect(pumpControl.y, pump_m_flow_r1.m_flow_in) annotation(
-      Line(points = {{116, 70}, {116, 60}}, color = {0, 0, 127}));
-    connect(TsetAir.y, pumpControl.T_set) annotation(
-      Line(points = {{148, 100}, {122, 100}, {122, 90}}, color = {0, 0, 127}));
-    connect(roomWithoutLossnay1.T, pumpControl.T_Air) annotation(
-      Line(points = {{260, 16}, {268, 16}, {268, 112}, {110, 112}, {110, 90}}, color = {0, 0, 127}));
-    connect(rad.heatPortRad, roomWithoutLossnay1.HeatPortRad) annotation(
-      Line(points = {{224, 14}, {242, 14}, {242, 22}, {248, 22}}, color = {191, 0, 0}));
-    connect(rad.heatPortCon, roomWithoutLossnay1.HeatPortCon) annotation(
-      Line(points = {{224, 18}, {248, 18}, {248, 12}}, color = {191, 0, 0}));
+  connect(TsetAir.y, pumpControl.T_set) annotation(
+      Line(points = {{101, 124}, {75, 124}, {75, 114}}, color = {0, 0, 127}));
+  connect(roomWithoutLossnay1.T, pumpControl.T_Air) annotation(
+      Line(points = {{137, 72}, {194, 72}, {194, 134}, {64, 134}, {64, 116}, {66, 116}, {66, 114}, {64, 114}}, color = {0, 0, 127}));
+  connect(roomCycle1ZoneTempCtrl2.port_con, roomWithoutLossnay1.HeatPortCon) annotation(
+      Line(points = {{100, 78}, {124, 78}}, color = {191, 0, 0}));
+  connect(roomCycle1ZoneTempCtrl2.port_rad, roomWithoutLossnay1.HeatPortRad) annotation(
+      Line(points = {{100, 68}, {124, 68}}, color = {191, 0, 0}));
+  connect(pumpControl.y, roomCycle1ZoneTempCtrl2.m_flow_rate) annotation(
+      Line(points = {{70, 94}, {70, 82}, {78, 82}}, color = {0, 0, 127}));
+  connect(BufferTank.fluPorVol[1], roomCycle1ZoneTempCtrl2.port_a) annotation(
+      Line(points = {{30, 82}, {66, 82}, {66, 78}, {80, 78}}, color = {0, 127, 255}));
+  connect(BufferTank.fluPorVol[2], roomCycle1ZoneTempCtrl2.port_b) annotation(
+      Line(points = {{30, 82}, {66, 82}, {66, 68}, {80, 68}}, color = {0, 127, 255}));
     annotation(
-      Diagram(coordinateSystem(extent = {{-160, 160}, {240, -100}})),
+      Diagram(coordinateSystem(extent = {{-160, 160}, {200, -100}})),
       experiment(StartTime = 0, StopTime = 14400, Tolerance = 1e-06, Interval = 28.8));
   end plant;
   annotation(
