@@ -360,7 +360,7 @@ package System
       Modelica.Thermal.HeatTransfer.Celsius.TemperatureSensor temperatureSensor annotation(
         Placement(visible = true, transformation(origin = {58, 2}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
       Modelica.Blocks.Interfaces.RealOutput T annotation(
-        Placement(visible = true, transformation(origin = {98, 2}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {126, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+        Placement(visible = true, transformation(origin = {98, 2}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {150, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
     equation
       connect(thermalConductor_wall1.port_b, heatCapacitor.port) annotation(
         Line(points = {{-82, 34}, {-74, 34}, {-74, 44}, {-68, 44}}, color = {191, 0, 0}));
@@ -387,7 +387,7 @@ package System
       connect(T, temperatureSensor.T) annotation(
         Line(points = {{98, 2}, {68, 2}}, color = {0, 0, 127}));
       annotation(
-        Icon(graphics = {Rectangle(lineColor = {0, 85, 255}, fillColor = {0, 170, 255}, pattern = LinePattern.None, fillPattern = FillPattern.Solid, lineThickness = 1, extent = {{-100, 100}, {100, -100}}), Text(origin = {2, 133}, lineColor = {0, 0, 255}, extent = {{-104, 21}, {104, -21}}, textString = "%name"), Rectangle(lineColor = {97, 97, 97}, lineThickness = 8, extent = {{-100, 100}, {100, -100}}), Line(origin = {93, 0}, points = {{-23, 0}, {23, 0}, {23, 0}})}, coordinateSystem(extent = {{-100, 160}, {140, -100}})),
+        Icon(graphics = {Rectangle(origin = {0, 110}, fillColor = {103, 103, 103}, pattern = LinePattern.None, fillPattern = FillPattern.Solid, lineThickness = 0, extent = {{-100, 10}, {100, -10}}),Rectangle(lineColor = {0, 85, 255}, fillColor = {0, 170, 255}, pattern = LinePattern.None, fillPattern = FillPattern.Solid, lineThickness = 1, extent = {{-100, 100}, {100, -100}}), Text(origin = {2, 133}, lineColor = {0, 0, 255}, extent = {{-104, 21}, {104, -21}}, textString = "%name"), Rectangle(origin = {0, -110}, fillColor = {103, 103, 103}, pattern = LinePattern.None, fillPattern = FillPattern.Solid, lineThickness = 0, extent = {{-100, 10}, {100, -10}}), Rectangle(origin = {-110, 0}, fillColor = {103, 103, 103}, pattern = LinePattern.None, fillPattern = FillPattern.Solid, lineThickness = 0, extent = {{-10, 120}, {10, -120}}), Rectangle(origin = {110, 0}, fillColor = {103, 103, 103}, pattern = LinePattern.None, fillPattern = FillPattern.Solid, lineThickness = 0, extent = {{-10, 120}, {10, -120}}), Line(origin = {116.911, -0.117096}, points = {{-23, 0}, {23, 0}, {23, 0}})}, coordinateSystem(extent = {{-120, 160}, {160, -120}})),
         Diagram(coordinateSystem(extent = {{-180, 120}, {60, -40}})));
     end RoomWithoutLossnay;
     
@@ -453,7 +453,7 @@ model RoomWithLossnay
   Modelica.Thermal.HeatTransfer.Celsius.TemperatureSensor temperatureSensor annotation(
     Placement(visible = true, transformation(origin = {58, 2}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Interfaces.RealOutput T annotation(
-    Placement(visible = true, transformation(origin = {98, 2}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {126, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+    Placement(visible = true, transformation(origin = {98, 2}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {150, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   // Lossnay
   Buildings.Fluid.HeatExchangers.ConstantEffectiveness hex(
     redeclare package Medium1 = Medium,
@@ -553,7 +553,7 @@ m_flow_nominal=2*(room_w * room_d * room_h)*1.2*0.37/3600,
   connect(dpRet.port_a, hex.port_b2) annotation(
         Line(points = {{-90, -122}, {-84, -122}, {-84, -94}, {-78, -94}}, color = {0, 127, 255}));
   annotation(
-    Icon(graphics = {Rectangle(lineColor = {0, 85, 255}, fillColor = {0, 170, 255}, pattern = LinePattern.None, fillPattern = FillPattern.Solid, lineThickness = 1, extent = {{-100, 100}, {100, -100}}), Text(origin = {2, 133}, lineColor = {0, 0, 255}, extent = {{-104, 21}, {104, -21}}, textString = "%name"), Rectangle(lineColor = {97, 97, 97}, lineThickness = 8, extent = {{-100, 100}, {100, -100}}), Line(origin = {93, 0}, points = {{-23, 0}, {23, 0}, {23, 0}})}, coordinateSystem(extent = {{-100, 160}, {140, -100}})),
+    Icon(graphics = {Rectangle(lineColor = {0, 85, 255}, fillColor = {0, 170, 255}, pattern = LinePattern.None, fillPattern = FillPattern.Solid, lineThickness = 1, extent = {{-100, 100}, {100, -100}}), Text(origin = {2, 133}, lineColor = {0, 0, 255}, extent = {{-104, 21}, {104, -21}}, textString = "%name"), Line(origin = {101.574, -38}, points = {{-15, 0}, {15, 0}}, color = {0, 0, 255}, thickness = 0.75, arrow = {Arrow.None, Arrow.Filled}, arrowSize = 7), Line(origin = {71.2439, -63.1815}, points = {{45, 0}, {15, 0}}, color = {0, 0, 255}, thickness = 0.75, arrow = {Arrow.None, Arrow.Filled}, arrowSize = 7), Rectangle(origin = {0, 110}, fillColor = {103, 103, 103}, pattern = LinePattern.None, fillPattern = FillPattern.Solid, lineThickness = 0, extent = {{-100, 10}, {100, -10}}), Rectangle(origin = {0, -110}, fillColor = {103, 103, 103}, pattern = LinePattern.None, fillPattern = FillPattern.Solid, lineThickness = 0, extent = {{-100, 10}, {100, -10}}), Rectangle(origin = {-110, 0}, fillColor = {103, 103, 103}, pattern = LinePattern.None, fillPattern = FillPattern.Solid, lineThickness = 0, extent = {{-10, 120}, {10, -120}}), Rectangle(origin = {110, 50}, fillColor = {103, 103, 103}, pattern = LinePattern.None, fillPattern = FillPattern.Solid, lineThickness = 0, extent = {{-10, 70}, {10, -70}}), Line(origin = {117.082, -0.725368}, points = {{-23, 0}, {23, 0}, {23, 0}}), Rectangle(origin = {110, -100}, fillColor = {103, 103, 103}, pattern = LinePattern.None, fillPattern = FillPattern.Solid, lineThickness = 0, extent = {{-10, 20}, {10, -20}})}, coordinateSystem(extent = {{-120, 160}, {160, -120}})),
     Diagram(coordinateSystem(extent = {{-220, 100}, {120, -100}})));
 
 end RoomWithLossnay;
@@ -940,7 +940,7 @@ end RoomWithLossnay;
 
       annotation(
         experiment(StopTime = 100, StartTime = 0, Tolerance = 1e-06, Interval = 0.2),
-        Diagram);
+        Diagram(coordinateSystem(extent = {{0, 40}, {40, -20}})));
     end RoomWithLossnay;
   end Test;
 
