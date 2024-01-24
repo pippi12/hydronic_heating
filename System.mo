@@ -336,9 +336,7 @@ package System
       //
       Buildings.HeatTransfer.Sources.FixedTemperature ambT(T = amb_T) annotation(
         Placement(visible = true, transformation(origin = {-160, 34}, extent = {{-8, -8}, {8, 8}}, rotation = 0)));
-      Buildings.Fluid.MixingVolumes.MixingVolume roomAir(
-        redeclare package Medium = Medium,
-        T_start = mediumRoomAir_initT, V = room_w * room_d * room_h, allowFlowReversal = true, m_flow_nominal = 0.01, massDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, nPorts = 0, p_start(displayUnit = "Pa") = mediumRoomAir_initP, use_C_flow = false) annotation(
+      Buildings.Fluid.MixingVolumes.MixingVolume roomAir(redeclare package Medium = Medium, T_start = mediumRoomAir_initT, V = room_w * room_d * room_h, allowFlowReversal = true, m_flow_nominal = 0.01, massDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, nPorts = 0, p_start(displayUnit = "Pa") = mediumRoomAir_initP, use_C_flow = false) annotation(
         Placement(visible = true, transformation(origin = {22, 2}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
       Modelica.Thermal.HeatTransfer.Components.HeatCapacitor heatCapacitor(C = rw_vol * rw_rho * rw_c, T(fixed = true, start = rw_initT)) annotation(
         Placement(visible = true, transformation(origin = {-68, 54}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
@@ -725,6 +723,106 @@ package System
     </ul>
     </html>"));
     end RoomCycle1ZoneTempCtrl2;
+
+    model SimpleRoom
+      replaceable package Medium = Buildings.Media.Air;
+      inner Modelica.Fluid.System system annotation(
+        Placement(visible = true, transformation(origin = {-170, 92}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+      extends BaseClasses.PartialSimpleAirHeatBalance;
+      // Parameters
+      parameter Modelica.Units.SI.Temperature amb_T = 273.15 + 5 "Ambience initial temperature";
+      // Initialization
+      parameter Modelica.Units.SI.Temperature mediumRoomAir_initT = 273.15 + 20 "Room air initial temperature";
+      parameter Modelica.Units.SI.Pressure mediumRoomAir_initP = 101325 "Room air initial Pressure";
+      parameter Modelica.Units.SI.Temperature rw_initT = 273.15 + 15 "Room wall initial temperature";
+      // Room
+      parameter Modelica.Units.SI.Length room_w = 1.6 "Width of room";
+      parameter Modelica.Units.SI.Length room_d = 4.8 "Depth of room";
+      parameter Modelica.Units.SI.Length room_h = 2.4 "Height of room";
+      parameter Modelica.Units.SI.Area room_area = 2 * (room_w * room_d + room_d * room_h + room_h * room_w) "Area of room";
+      parameter Modelica.Units.SI.Length rw_thickness = 0.1 "Thickness of room wall";
+      parameter Modelica.Units.SI.Density rw_rho = 144 "Density of room wall";
+      parameter Modelica.Units.SI.SpecificHeatCapacity rw_c = 1168 "Specific heat capacity of room wall";
+      parameter Modelica.Units.SI.ThermalConductivity rw_k = 0.3 "Heat conductivity of room wall";
+      parameter Modelica.Units.SI.Volume rw_vol = room_area * rw_thickness;
+      parameter Modelica.Units.SI.CoefficientOfHeatTransfer rw_air_htc = 5 "Air-Room wall heat transfer coeff.";
+      final parameter Modelica.Units.SI.MassFlowRate m_flow_nominal = 0.1 "Mass flow rate";
+      //final parameter Modelica.Units.SI.PressureDifference dp_nominal = 4500 "Design pressure drop";
+      // Components
+      //
+      Buildings.HeatTransfer.Sources.FixedTemperature ambT(T = amb_T) annotation(
+        Placement(visible = true, transformation(origin = {-176, 46}, extent = {{-8, -8}, {8, 8}}, rotation = 0)));
+      Buildings.Fluid.MixingVolumes.MixingVolume roomAir(redeclare package Medium = Medium, T_start = mediumRoomAir_initT, V = room_w * room_d * room_h, allowFlowReversal = true, m_flow_nominal = 0.01, massDynamics = Modelica.Fluid.Types.Dynamics.FixedInitial, nPorts = 0, p_start(displayUnit = "Pa") = mediumRoomAir_initP, use_C_flow = false) annotation(
+        Placement(visible = true, transformation(origin = {22, 2}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+      Modelica.Thermal.HeatTransfer.Components.HeatCapacitor heatCapacitor(C = rw_vol * rw_rho * rw_c, T(fixed = true, start = rw_initT)) annotation(
+        Placement(visible = true, transformation(origin = {-84, 66}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+      Modelica.Thermal.HeatTransfer.Components.ThermalConductor thermalConductor_wall1(G = rw_k * room_area * 2 / rw_thickness) annotation(
+        Placement(visible = true, transformation(origin = {-108, 46}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+      Modelica.Thermal.HeatTransfer.Components.ThermalConductor thermalConductor_wall2(G = rw_k * room_area * 2 / rw_thickness) annotation(
+        Placement(visible = true, transformation(origin = {-60, 46}, extent = {{10, -10}, {-10, 10}}, rotation = 0)));
+      Buildings.HeatTransfer.Convection.Exterior con_ext(A = room_area, azi = 3.14 / 2, conMod = Buildings.HeatTransfer.Types.ExteriorConvection.Fixed, hFixed = rw_air_htc, til = 0) annotation(
+        Placement(visible = true, transformation(origin = {-148, 46}, extent = {{10, -10}, {-10, 10}}, rotation = 0)));
+      Buildings.HeatTransfer.Convection.Interior con_int(A = room_area, conMod = Buildings.HeatTransfer.Types.InteriorConvection.Fixed, hFixed = rw_air_htc, til = 0) annotation(
+        Placement(visible = true, transformation(origin = {-22, 46}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+      Modelica.Blocks.Sources.Constant const_v(k = 0) annotation(
+        Placement(visible = true, transformation(origin = {-110, 96}, extent = {{-7, 7}, {7, -7}}, rotation = -180)));
+      Modelica.Blocks.Sources.Constant const_d(k = 0) annotation(
+        Placement(visible = true, transformation(origin = {-110, 76}, extent = {{-7, 7}, {7, -7}}, rotation = -180)));
+      Modelica.Thermal.HeatTransfer.Celsius.TemperatureSensor temperatureSensor annotation(
+        Placement(visible = true, transformation(origin = {48, -22}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+    equation
+  connect(thermalConductor_wall1.port_b, heatCapacitor.port) annotation(
+        Line(points = {{-98, 46}, {-90, 46}, {-90, 56}, {-84, 56}}, color = {191, 0, 0}));
+  connect(heatCapacitor.port, thermalConductor_wall2.port_b) annotation(
+        Line(points = {{-84, 56}, {-78, 56}, {-78, 46}, {-70, 46}}, color = {191, 0, 0}));
+  connect(con_ext.solid, thermalConductor_wall1.port_a) annotation(
+        Line(points = {{-138, 46}, {-118, 46}}, color = {191, 0, 0}));
+  connect(con_ext.fluid, ambT.port) annotation(
+        Line(points = {{-158, 46}, {-168, 46}}, color = {191, 0, 0}));
+  connect(thermalConductor_wall2.port_a, con_int.solid) annotation(
+        Line(points = {{-50, 46}, {-32, 46}}, color = {191, 0, 0}));
+  connect(con_int.fluid, roomAir.heatPort) annotation(
+        Line(points = {{-12, 46}, {-12, 2}, {12, 2}}, color = {191, 0, 0}));
+  connect(const_v.y, con_ext.v) annotation(
+        Line(points = {{-117.7, 96}, {-127.7, 96}, {-127.7, 56}, {-135.7, 56}}, color = {0, 0, 127}));
+  connect(const_d.y, con_ext.dir) annotation(
+        Line(points = {{-117.7, 76}, {-125.7, 76}, {-125.7, 52}, {-135.7, 52}}, color = {0, 0, 127}));
+  connect(roomAir.heatPort, temperatureSensor.port) annotation(
+        Line(points = {{12, 2}, {4, 2}, {4, -22}, {38, -22}}, color = {191, 0, 0}));
+/*
+      for i in 1:nPorts loop
+        connect(ports[i],roomAir.ports[i])
+        annotation (Line(
+          points={{-260,-60},{-218,-60},{-218,-206},{52,-206},{52,-141.9}},
+          color={0,127,255},
+          smooth=Smooth.None));
+      end for;
+      */
+
+      connect(HeatPortCon, roomAir.heatPort) annotation(
+        Line(points = {{-100, 20}, {-12, 20}, {-12, 2}, {12, 2}}, color = {191, 0, 0}));
+  connect(HeatPortRad, roomAir.heatPort) annotation(
+        Line(points = {{-100, -20}, {-12, -20}, {-12, 2}, {12, 2}}, color = {191, 0, 0}));
+  connect(temperatureSensor.T, T) annotation(
+        Line(points = {{58, -22}, {58, 0}, {102, 0}}, color = {0, 0, 127}));
+      protected
+  annotation(
+        Icon(graphics = {Rectangle(origin = {0, 90}, fillColor = {103, 103, 103}, pattern = LinePattern.None, fillPattern = FillPattern.Solid, lineThickness = 0, extent = {{-80, 10}, {80, -10}}), Rectangle(origin = {0, -90}, fillColor = {103, 103, 103}, pattern = LinePattern.None, fillPattern = FillPattern.Solid, lineThickness = 0, extent = {{-80, 10}, {80, -10}}), Rectangle(origin = {-90, 0}, fillColor = {103, 103, 103}, pattern = LinePattern.None, fillPattern = FillPattern.Solid, lineThickness = 0, extent = {{-10, 100}, {10, -100}}), Rectangle(origin = {90, 0}, fillColor = {103, 103, 103}, pattern = LinePattern.None, fillPattern = FillPattern.Solid, lineThickness = 0, extent = {{-10, 100}, {10, -100}})}, coordinateSystem(extent = {{-140, 140}, {140, -100}})),
+        Diagram(coordinateSystem(extent = {{-200, 120}, {120, -40}})));
+    end SimpleRoom;
+
+    package BaseClasses
+      partial model PartialSimpleAirHeatBalance
+        Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a HeatPortCon annotation(
+          Placement(visible = true, transformation(origin = {-100, 20}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-120, 50}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+        Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a HeatPortRad annotation(
+          Placement(visible = true, transformation(origin = {-100, -20}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {-120, -50}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+        Modelica.Blocks.Interfaces.RealOutput T annotation(
+          Placement(visible = true, transformation(origin = {102, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {130, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+        annotation(
+          Icon(graphics = {Rectangle(fillColor = {0, 170, 255}, pattern = LinePattern.None, fillPattern = FillPattern.Solid, extent = {{-80, 80}, {80, -80}}), Line(origin = {-73, 50}, points = {{-37, 0}, {0, 0}}, color = {189, 0, 0}), Line(origin = {-73.1, -49.85}, points = {{-37, 0}, {0, 0}}, color = {189, 0, 0}), Line(origin = {92, 0}, points = {{28, 0}, {-28, 0}}), Text(origin = {0, 120}, lineColor = {0, 0, 255}, extent = {{-140, 20}, {140, -20}}, textString = "%name")}));
+      end PartialSimpleAirHeatBalance;
+    end BaseClasses;
   end MyComponents;
 
   package Test
