@@ -705,7 +705,7 @@ model TwoPipesCounterFlow
     "Default density of return side (e.g., rho_liquidWater = 995, rho_air = 1.2)"
     annotation (Dialog(group="Advanced"));
 
-  parameter Modelica.Units.SI.Temperature Amb_T = 273.15 + 5 "Ambience temperature";
+  //parameter Modelica.Units.SI.Temperature Amb_T = 273.15 + 5 "Ambience temperature";
   parameter Boolean from_dp = false "= true, use m_flow = f(dp) else dp = f(m_flow)" annotation(
     Dialog(tab = "Advanced"));
   parameter Boolean have_pipCap = true "= true, a mixing volume is added that corresponds
@@ -769,22 +769,23 @@ model TwoPipesCounterFlow
     redeclare package Medium = Medium2,
     R = R2, ReC = ReC, T_start_in = T2_start_in, T_start_out = T2_start_out, allowFlowReversal = allowFlowReversal2, cPip = cPip, dIns = dIns, dh = dh2, fac = fac, from_dp = from_dp, have_pipCap = have_pipCap, have_symmetry = have_symmetry, initDelay = initDelay, kIns = kIns, length = length, linearized = linearized, m_flow_nominal = m2_flow_nominal, m_flow_small = m2_flow_small, m_flow_start = m_flow_start, rhoPip = rhoPip, roughness = roughness, show_T = false, thickness = thickness, v_nominal = v_nominal) annotation(
     Placement(visible = true, transformation(origin = {0, -60}, extent = {{10, -10}, {-10, 10}}, rotation = 0)));
-  Buildings.HeatTransfer.Sources.FixedTemperature outdoor(each T = Amb_T) "Boundary temperature" annotation(
-    Placement(visible = true, transformation(origin = {-74, 1}, extent = {{-7, -7}, {7, 7}}, rotation = 0)));
+  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a heatPort annotation(
+        Placement(visible = true, transformation(origin = {0, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {1, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+
 equation
-  connect(port_a2, pipRet.port_a) annotation(
-    Line(points = {{100, -60}, {10, -60}}));
-  connect(pipRet.port_b, port_b2) annotation(
-    Line(points = {{-10, -60}, {-100, -60}}, color = {0, 127, 255}));
-  connect(pipSup.port_b, port_b1) annotation(
-    Line(points = {{10, 60}, {100, 60}}, color = {0, 127, 255}));
-  connect(pipSup.port_a, port_a1) annotation(
-    Line(points = {{-10, 60}, {-100, 60}}, color = {0, 127, 255}));
-  connect(outdoor.port, pipSup.heatPort) annotation(
-    Line(points = {{-66, 2}, {0, 2}, {0, 50}}, color = {191, 0, 0}));
-  connect(outdoor.port, pipRet.heatPort) annotation(
-    Line(points = {{-66, 2}, {0, 2}, {0, -50}}, color = {191, 0, 0}));
-  annotation(
+      connect(port_a2, pipRet.port_a) annotation(
+        Line(points = {{100, -60}, {10, -60}}));
+      connect(pipRet.port_b, port_b2) annotation(
+        Line(points = {{-10, -60}, {-100, -60}}, color = {0, 127, 255}));
+      connect(pipSup.port_b, port_b1) annotation(
+        Line(points = {{10, 60}, {100, 60}}, color = {0, 127, 255}));
+      connect(pipSup.port_a, port_a1) annotation(
+        Line(points = {{-10, 60}, {-100, 60}}, color = {0, 127, 255}));
+  connect(heatPort, pipSup.heatPort) annotation(
+        Line(points = {{0, 0}, {0, 50}}, color = {191, 0, 0}));
+  connect(heatPort, pipRet.heatPort) annotation(
+        Line(points = {{0, 0}, {0, -50}}, color = {191, 0, 0}));
+      annotation(
     Icon(coordinateSystem(preserveAspectRatio = false, extent = {{-100, -100}, {100, 100}}), graphics = {Rectangle(origin = {0, 60.5}, fillColor = {192, 192, 192}, fillPattern = FillPattern.HorizontalCylinder, extent = {{-100, 31}, {100, -30}}), Rectangle(origin = {0, 59.5}, fillColor = {255, 0, 0}, fillPattern = FillPattern.HorizontalCylinder, extent = {{-100, 21}, {100, -20}}), Rectangle(origin = {0, 50}, lineColor = {175, 175, 175}, fillColor = {255, 255, 255}, fillPattern = FillPattern.Backward, extent = {{-100, 50}, {100, 40}}), Rectangle(origin = {0, 70}, lineColor = {175, 175, 175}, fillColor = {255, 255, 255}, fillPattern = FillPattern.Backward, extent = {{-100, -40}, {100, -50}}), Rectangle(origin = {0, 60}, fillColor = {215, 202, 187}, fillPattern = FillPattern.HorizontalCylinder, extent = {{-30, 20}, {28, -20}}), Text(origin = {3, -27}, extent = {{-102, -76}, {98, -104}}, textString = "L = %length"), Text(origin = {0, -17}, extent = {{-100, -56}, {100, -74}}, textString = "L = %length"), Rectangle(origin = {0, -70}, lineColor = {175, 175, 175}, fillColor = {255, 255, 255}, fillPattern = FillPattern.Backward, extent = {{-100, 50}, {100, 40}}), Rectangle(origin = {0, -60.5}, fillColor = {192, 192, 192}, fillPattern = FillPattern.HorizontalCylinder, extent = {{-100, 31}, {100, -30}}), Rectangle(origin = {0, -59.5}, fillColor = {0, 127, 255}, fillPattern = FillPattern.HorizontalCylinder, extent = {{-100, 21}, {100, -20}}), Rectangle(origin = {0, -59}, fillColor = {215, 202, 187}, fillPattern = FillPattern.HorizontalCylinder, extent = {{-30, 20}, {28, -20}}), Rectangle(origin = {0, -50}, lineColor = {175, 175, 175}, fillColor = {255, 255, 255}, fillPattern = FillPattern.Backward, extent = {{-100, -40}, {100, -50}})}));
 
 end TwoPipesCounterFlow;
@@ -974,8 +975,11 @@ end TwoPipesCounterFlow;
       System.MyComponents.TwoPipesCounterFlow twoPipesCounterFlow(
         redeclare package Medium1 = Medium,
         redeclare package Medium2 = Medium,
-        Amb_T = 273.15 + 5,allowFlowReversal1 = false, allowFlowReversal2 = false, dIns = 1, kIns = 0.001, length = 10, m1_flow_nominal = 0.1, m2_flow_nominal = 0.2) annotation(
+        allowFlowReversal1 = false, allowFlowReversal2 = false, dIns = 1, kIns = 0.001, length = 10, m1_flow_nominal = 0.1, m2_flow_nominal = 0.2) annotation(
         Placement(visible = true, transformation(origin = {12, 14}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+      Buildings.HeatTransfer.Sources.FixedTemperature outdoor(T = 273.15 + 5) "Boundary temperature" annotation(
+        Placement(visible = true, transformation(origin = {-50, -5}, extent = {{-7, -7}, {7, 7}}, rotation = 0)));
+    
     equation
   connect(Tin.y, sou.T_in) annotation(
         Line(points = {{-79, 0}, {-68, 0}, {-68, 54}, {-64, 54}}, color = {0, 0, 127}));
@@ -991,6 +995,8 @@ end TwoPipesCounterFlow;
         Line(points = {{-42, 50}, {30, 50}, {30, 8}, {22, 8}}, color = {0, 127, 255}));
   connect(twoPipesCounterFlow.port_b2, sin.ports[2]) annotation(
         Line(points = {{2, 8}, {-4, 8}, {-4, -6}, {74, -6}, {74, 44}, {78, 44}}, color = {0, 127, 255}));
+  connect(outdoor.port, twoPipesCounterFlow.heatPort) annotation(
+        Line(points = {{-42, -4}, {-8, -4}, {-8, 14}, {12, 14}}, color = {191, 0, 0}));
       annotation(
         experiment(StartTime = 0, StopTime = 1000, Tolerance = 1e-6, Interval = 2),
         Diagram(coordinateSystem(extent = {{-100, 80}, {100, -20}})));
