@@ -1347,8 +1347,6 @@ Air To Waterのうち，水回路と部屋をあわせたモデル．
         Line(points = {{42, -44}, {42, -52}}, color = {0, 127, 255}));
     connect(jun_sup_hal1.port_3, rad_hal1.port_a) annotation(
         Line(points = {{40, -98}, {112, -98}, {112, -102}}, color = {0, 127, 255}));
-    connect(rad_hal1.port_b, jun_ret_hal1.port_3) annotation(
-        Line(points = {{112, -122}, {112, -124}, {58, -124}, {58, -110}, {52, -110}}, color = {0, 127, 255}));
     connect(jun_ret_hal1.port_2, pips_hal_1.port_a2) annotation(
         Line(points = {{42, -100}, {42, -72}}, color = {0, 127, 255}));
     connect(pips_hal_1.port_b1, jun_sup_hal1.port_1) annotation(
@@ -1435,6 +1433,10 @@ Air To Waterのうち，水回路と部屋をあわせたモデル．
       Line(points = {{-42, -162}, {186, -162}, {186, -14}, {198, -14}}, color = {191, 0, 0}));
   connect(rad_toi.heatPortCon, roomAir.heatPort) annotation(
       Line(points = {{-42, -166}, {186, -166}, {186, -14}, {198, -14}}, color = {191, 0, 0}));
+  connect(rad_hal1.port_b, pips_kit_31.port_a2) annotation(
+      Line(points = {{112, -122}, {112, -124}, {98, -124}, {98, -110}, {84, -110}}, color = {0, 127, 255}));
+  connect(pips_kit_31.port_b2, jun_ret_hal1.port_3) annotation(
+      Line(points = {{64, -110}, {52, -110}}, color = {0, 127, 255}));
   annotation(
       Diagram(coordinateSystem(extent = {{-120, 100}, {180, -200}})));
   end plantEx;
